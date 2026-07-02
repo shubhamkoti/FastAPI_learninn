@@ -2,23 +2,23 @@ from fastapi import FastAPI
 
 app=FastAPI()
 
-@app.get('/')
-def home():
-  return {"message":"this is About page"}
-
-@app.get("/about")
-def about():
-  return {"Message" :"this is about page"}
-
-@app.get("/users")
-def user():
-  return {"users":["Mohit","shubh"]}
+@app.get('/user')
+def home(name):
+  return {"Name":name}
 
 
-@app.get("/login")
-def login():
+@app.get('/products')
+def get_users(limit:int=10):
   return {
-    "name":"javir",
-    "age":24,
-    "Skills":["C++","Python"]
+    "Limit":limit
+  }
+
+
+# Multiple parameters 
+
+@app.get("/items")
+def items(name:str=None,price:int=0):
+  return {
+     "Name":name,
+     "price":price
   }

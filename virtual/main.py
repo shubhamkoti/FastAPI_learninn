@@ -1,24 +1,16 @@
-from fastapi import FastAPI 
+from fastapi import FastAPI
+from pydantic import BaseModel
 
 app=FastAPI()
 
-@app.get('/user')
-def home(name):
-  return {"Name":name}
+# Hite apn scheme jya nusar banvaycha ahe techa nusar class declare kela eh , 
+# manje apn validation hite check krto type of name , age , manually check nahi karav lagat hya madhe jr Pydantic use krto asel tr 
+class User(BaseModel):
+  name:str
+  age:int
 
-
-@app.get('/products')
-def get_users(limit:int=10):
+@app.post("/create-user")
+def create_user(user:User):
   return {
-    "Limit":limit
-  }
-
-
-# Multiple parameters 
-
-@app.get("/items")
-def items(name:str=None,price:int=0):
-  return {
-     "Name":name,
-     "price":price
+    "users": user
   }

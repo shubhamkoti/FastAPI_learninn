@@ -88,3 +88,30 @@ def delete_todo(todo_id : int):
       return {"Message":"Data Deleted"}
     
     return {"Error":"Data Not Found"}
+  
+
+#  path + Query +Body 
+users=[]
+
+class User(BaseModel):
+  name:str
+  age:int
+
+@app.post("/users")
+def create_user(user:User):
+  users.append(user)
+  return {
+    "Message":"User Created"
+  }
+
+@app.put("/users/user_id")
+def updated_user(user_id:int,user:User,notify=False):
+  if user_id <len(users):
+    users[user_id]=user
+
+    return {
+      "msg":"user Updated",
+      "Notify":notify,
+      "data":users[user_id]
+    } 
+  return {"Error":"User Not Found"}

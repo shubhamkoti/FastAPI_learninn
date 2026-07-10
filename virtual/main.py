@@ -1,117 +1,71 @@
-from fastapi import FastAPI
-from pydantic import BaseModel
+# from fastapi import FastAPI , HTTPException
+# from pydantic import BaseModel 
+
+# app = FastAPI()
+
+# class Student(BaseModel):
+#     name: str
+#     branch: str
+
+# @app.put("/students/{student_id}")
+# def update_student(
+#     student_id: int,
+#     notify: bool = False,
+#     student: Student = None
+# ):
+#     return {
+#         "student_id": student_id,
+#         "notify": notify,
+#         "student": student
+#     }
+
+
+from fastapi import FastAPI , Query , Cookie , Header
+from typing import Annotated
+from  pydantic import BaseModel
+
+class Item(BaseModel):
+  name:str
+  description:str| None=None
+  price:float
+  tax:float | None=None
 
 app=FastAPI()
 
-# Hite apn scheme jya nusar banvaycha ahe techa nusar class declare kela eh , 
-# manje apn validation hite check krto type of name , age , manually check nahi karav lagat hya madhe jr Pydantic use krto asel tr 
-
-# class User(BaseModel):
-#   name:str
-#   age:int
-#   email:str
+# @app.put("/items/{item_id}")
+# async def update_item(item_id:int , item:Item):
+#   return {"Item ":item_id, **item.model_dump()}
 
 
-# @app.post("/create-user")
-# def create_user(user:User):
-#   return {
-#     "Message":"User Created",
-#     "users": user
-#   }
+# @app.get("/item")
+# async def read_item(q:Annotated[str| None, Query(min_length=3,max_length=50,pattern="^fixquery$")]=None):
+#   results={"Items":[{"item_id":"Foo"},{"item_id":"Bae"}]}
+#   if q:
+#     results.update({"q":q})
+#   return results
 
-# class Address(BaseModel):
-#    city:str
-#    pincode:int
+# @app.get("/item")
+# async def read_items(q:Annotated[list[str]| None,Query()]=None):
+#   query_items={"q":q}
+#   return query_items
+# He manje apn default values set krnya sathi ahe , ani baki sudha 
 
-# class User(BaseModel):
-#    name:str
-#    age:int 
-#    address:Address
-
-# @app.post("/create-user")
-# def create(user:User):
-#    return {
-#       "Message":"Created User",
-#       "user":User
-#    }
-
-
-
-# -----------CRUD ------------
-todos=[]
-
-class Todo(BaseModel):
-  id:int 
-  title: str
-  completed:bool
-
-@app.post("/todos")
-def create_todo(todo:Todo):
-  todos.append(todo)
-  return {
-    "Message":"Todo Added ", "data":todo
-  }
-
-@app.get("/todos")
-def get_todos():
-  return todos
-
-# here we get element with particular ID 
-@app.get("/todos/{todo_id}")
-def get_todo(todo_id:int):
-  for todo in todos:
-    if todo.id  == todo_id:
-     return todo
-    
-  return {"error ": "todo not foinud "}
- 
-# here we update the old value
-@app.put("/todos/{todo_id}")
-def update_todo(todo_id:int ,updated_todo:Todo):
-  for index,todo in enumerate(todos):
-    if todo.id ==todo_id:
-      todos[index]=updated_todo
-      return {
-        "Message ":"data updated",
-        "Data":updated_todo
-      }
-    
-  return { "erro":"Todos not found"}
-
-
-# here we delete the data with particular ID
-@app.delete("/todos/{todo_id}")
-def delete_todo(todo_id : int):
-  for index, todo in enumerate(todos):
-    if todo.id == todo_id:
-      todos.pop(index)
-      return {"Message":"Data Deleted"}
-    
-    return {"Error":"Data Not Found"}
-  
-
-#  path + Query +Body 
-users=[]
-
-class User(BaseModel):
+class Item(BaseModel):
   name:str
-  age:int
+  description:str | None= None
+  price:float
+  tax:float|None=None
+  
+class User(BaseModel):
+  username:str
+  dull_name:str | None= None
 
-@app.post("/users")
-def create_user(user:User):
-  users.append(user)
-  return {
-    "Message":"User Created"
-  }
+@app.put("/item/{item_id}")
+async def update_item(item_id:int , item:Item , user:User):
+  results={"Item_id":item_id , "Item":item, "user":user}
+  return results
 
-@app.put("/users/user_id")
-def updated_user(user_id:int,user:User,notify=False):
-  if user_id <len(users):
-    users[user_id]=user
-
-    return {
-      "msg":"user Updated",
-      "Notify":notify,
-      "data":users[user_id]
-    } 
-  return {"Error":"User Not Found"}
+# Cookies 
+@app.get("/item")
+async def read_item(ads:Annotated[str|None,Header()]=None):
+  return {"Id":ads}
